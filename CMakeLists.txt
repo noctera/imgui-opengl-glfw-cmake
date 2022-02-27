@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 # Note: update this to your new project's name and version
 project(
-  ImguiOpencvTemplate
+  ImguiOpenglTemplate
   VERSION 1.0
   LANGUAGES CXX
 )
@@ -33,7 +33,8 @@ CPMAddPackage(
   OPTIONS "FMT_INSTALL YES" # create an installable target
 )
 
-find_package(imgui REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+
 
 # ---- Add source files ----
 
@@ -54,17 +55,13 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
 
 # Link dependencies
+target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
 target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
+add_subdirectory("libs")
 
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
-)
-
-target_link_libraries(
-  ${PROJECT_NAME}
-  PRIVATE
-    imgui::imgui
 )
 
 # ---- Create an installable target ----
