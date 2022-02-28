@@ -2,4 +2,3 @@
 /.vscode
 /cpm_modules
 .DS_Store
-/external/imgui
