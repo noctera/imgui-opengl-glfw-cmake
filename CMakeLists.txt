@@ -23,6 +23,8 @@ endif()
 
 include(cmake/CPM.cmake)
 
+message(STATUS "Fetching third party libraries")
+
 # PackageProject.cmake will be used to make our target installable
 CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.8.0")
 
@@ -33,7 +35,19 @@ CPMAddPackage(
   OPTIONS "FMT_INSTALL YES" # create an installable target
 )
 
-find_package(glfw3 CONFIG REQUIRED)
+CPMAddPackage(
+  NAME glfw
+  GIT_TAG 3.3.6
+  GITHUB_REPOSITORY glfw/glfw
+)
+
+CPMAddPackage(
+  NAME imgui
+  GIT_TAG v1.87
+  GITHUB_REPOSITORY ocornut/imgui
+)
+
+message(STATUS "Finished fetching third party libraries")
 
 
 # ---- Add source files ----
@@ -47,7 +61,35 @@ file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/
 
 # Note: for header-only libraries change all PUBLIC flags to INTERFACE and create an interface
 # target: add_library(${PROJECT_NAME} INTERFACE)
-add_library(${PROJECT_NAME} ${headers} ${sources})
+add_library(${PROJECT_NAME} 
+  ${headers} 
+  ${sources}
+  ${imgui_SOURCE_DIR}/imgui.cpp
+  ${imgui_SOURCE_DIR}/imgui_demo.cpp
+  ${imgui_SOURCE_DIR}/imgui_draw.cpp
+  ${imgui_SOURCE_DIR}/imgui_tables.cpp
+  ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+  ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+)
+
+set(CMAKE_SHARED_LINKER_FLAGS
+  "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate"
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+  IMGUI_IMPL_OPENGL_ES3
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+  ${imgui_SOURCE_DIR}
+  ${imgui_SOURCE_DIR}/backends
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+  EGL
+  GLESv3
+  log
+)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 
@@ -57,12 +99,13 @@ target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>
 # Link dependencies
 target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
 target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
-add_subdirectory("libs")
 
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
 )
+
+#-----------------------------------------------------
 
 # ---- Create an installable target ----
 # this allows users to install and find the library via `find_package()`.
