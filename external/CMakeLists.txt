@@ -2,7 +2,7 @@ include(../cmake/CPM.cmake)
 
 CPMAddPackage(
   NAME imguilib
-  GIT_TAG v1.87
+  GIT_TAG origin/docking
   GITHUB_REPOSITORY ocornut/imgui
 )
 
