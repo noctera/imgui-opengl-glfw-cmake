@@ -41,11 +41,7 @@ CPMAddPackage(
   GITHUB_REPOSITORY glfw/glfw
 )
 
-CPMAddPackage(
-  NAME imgui
-  GIT_TAG v1.87
-  GITHUB_REPOSITORY ocornut/imgui
-)
+add_subdirectory(external)
 
 message(STATUS "Finished fetching third party libraries")
 
@@ -64,31 +60,6 @@ file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/
 add_library(${PROJECT_NAME} 
   ${headers} 
   ${sources}
-  ${imgui_SOURCE_DIR}/imgui.cpp
-  ${imgui_SOURCE_DIR}/imgui_demo.cpp
-  ${imgui_SOURCE_DIR}/imgui_draw.cpp
-  ${imgui_SOURCE_DIR}/imgui_tables.cpp
-  ${imgui_SOURCE_DIR}/imgui_widgets.cpp
-  ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
-)
-
-set(CMAKE_SHARED_LINKER_FLAGS
-  "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate"
-)
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-  IMGUI_IMPL_OPENGL_ES3
-)
-
-target_include_directories(${PROJECT_NAME} PRIVATE
-  ${imgui_SOURCE_DIR}
-  ${imgui_SOURCE_DIR}/backends
-)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE
-  EGL
-  GLESv3
-  log
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
@@ -103,6 +74,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
+                         "${PROJECT_SOURCE_DIR}/external/imgui"
 )
 
 #-----------------------------------------------------
