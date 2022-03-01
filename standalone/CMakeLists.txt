@@ -10,12 +10,6 @@ include(../cmake/tools.cmake)
 
 include(../cmake/CPM.cmake)
 
-CPMAddPackage(
-  GITHUB_REPOSITORY jarro2783/cxxopts
-  VERSION 2.2.1
-  OPTIONS "CXXOPTS_BUILD_EXAMPLES NO" "CXXOPTS_BUILD_TESTS NO" "CXXOPTS_ENABLE_INSTALL YES"
-)
-
 CPMAddPackage(NAME ImguiOpenglTemplate SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
 
 # ---- Create standalone executable ----
@@ -26,4 +20,4 @@ add_executable(${PROJECT_NAME} ${sources})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 OUTPUT_NAME "ImguiOpenglTemplate")
 
-target_link_libraries(${PROJECT_NAME} ImguiOpenglTemplate::ImguiOpenglTemplate cxxopts imgui)
+target_link_libraries(${PROJECT_NAME} ImguiOpenglTemplate::ImguiOpenglTemplate imgui)

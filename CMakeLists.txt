@@ -29,13 +29,6 @@ message(STATUS "Fetching third party libraries")
 CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.8.0")
 
 CPMAddPackage(
-  NAME fmt
-  GIT_TAG 7.1.3
-  GITHUB_REPOSITORY fmtlib/fmt
-  OPTIONS "FMT_INSTALL YES" # create an installable target
-)
-
-CPMAddPackage(
   NAME sdl
   GIT_TAG release-2.0.20
   GITHUB_REPOSITORY libsdl-org/SDL
@@ -73,7 +66,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
 
 # Link dependencies
-target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt SDL2::SDL2)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 target_link_libraries(${PROJECT_NAME} PUBLIC OpenGL::GL ${CMAKE_DL_LIBS})
 
 target_include_directories(
