@@ -21,8 +21,8 @@ target_sources(imgui
         ${imguilib_SOURCE_DIR}/imstb_rectpack.h
         ${imguilib_SOURCE_DIR}/imstb_textedit.h
         ${imguilib_SOURCE_DIR}/imstb_truetype.h
-        ${imguilib_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
-        ${imguilib_SOURCE_DIR}/backends/imgui_impl_glfw.h
+        ${imguilib_SOURCE_DIR}/backends/imgui_impl_sdl.cpp
+        ${imguilib_SOURCE_DIR}/backends/imgui_impl_sdl.h
         ${imguilib_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
         ${imguilib_SOURCE_DIR}/backends/imgui_impl_opengl3.h
         ${imguilib_SOURCE_DIR}/backends/imgui_impl_opengl3_loader.h

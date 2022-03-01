@@ -35,11 +35,10 @@ CPMAddPackage(
   OPTIONS "FMT_INSTALL YES" # create an installable target
 )
 
-CPMAddPackage(
-  NAME glfw
-  GIT_TAG 3.3.6
-  GITHUB_REPOSITORY glfw/glfw
-)
+
+find_package(SDL2 REQUIRED)
+find_package(OpenGL REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
 
 add_subdirectory(external)
 
@@ -68,8 +67,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
 
 # Link dependencies
-target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
-target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
+target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt ${SDL2_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC OpenGL::GL ${CMAKE_DL_LIBS})
 
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
