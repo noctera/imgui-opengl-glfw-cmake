@@ -28,19 +28,6 @@ message(STATUS "Fetching third party libraries")
 # PackageProject.cmake will be used to make our target installable
 CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.8.0")
 
-CPMAddPackage(
-  NAME sdl
-  GIT_TAG release-2.0.20
-  GITHUB_REPOSITORY libsdl-org/SDL
-)
-
-include_directories(${sdl_SOURCE_DIR}/include)
-
-
-find_package(OpenGL REQUIRED)
-
-add_subdirectory(external)
-
 message(STATUS "Finished fetching third party libraries")
 
 
@@ -66,13 +53,13 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
 
 # Link dependencies
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenGL::GL ${CMAKE_DL_LIBS})
 
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
 )
+
+add_subdirectory(external)
 
 #-----------------------------------------------------
 
