@@ -1,0 +1,167 @@
+name: CI
+
+on:
+  - push
+  - pull_request
+  - workflow_dispatch
+
+env:
+  CTEST_OUTPUT_ON_FAILURE: 1
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
+
+jobs:
+  linting:
+    name: "🧪 Linting"
+    if: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) }}
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: "**/cpm_modules"
+          key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+
+      - name: Install format dependencies
+        run: |
+          brew install clang-format
+          pip3 install cmake_format==0.6.11 pyyaml
+
+      - name: configure
+        run: cmake -Stest -Bbuild
+
+      - name: check style
+        run: cmake --build build --target check-format
+  testWindows:
+    name: 🧪 Test Windows
+    if: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) }}
+    needs: linting
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: "**/cpm_modules"
+          key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+
+      - name: configure
+        run: cmake -Stest -Bbuild
+
+      - name: build
+        run: cmake --build build --config Debug -j4
+
+      - name: test
+        run: |
+          cd build
+          ctest --build-config Debug
+  testLinux:
+    name: 🧪 Test Windows
+    if: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) }}
+    needs: linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: "**/cpm_modules"
+          key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+
+      - name: Install dependencies
+        run: sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev
+
+      - name: configure
+        run: cmake -Stest -Bbuild -DENABLE_TEST_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug
+
+      - name: build
+        run: cmake --build build -j4
+
+      - name: test
+        run: |
+          cd build
+          ctest --build-config Debug
+
+      - name: collect code coverage
+        run: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+  testMacOS:
+    name: 🧪 Test MacOS
+    if: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) }}
+    needs: linting
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: "**/cpm_modules"
+          key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+
+      - name: configure
+        run: cmake -Stest -Bbuild -DCMAKE_BUILD_TYPE=Debug
+
+      - name: build
+        run: cmake --build build -j4
+
+      - name: test
+        run: |
+          cd build
+          ctest --build-config Debug
+  buildStandalone:
+    name: ⚙️ Build Standalone
+    if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch' }}
+    needs: [linting, testWindows, testLinux, testMacOS]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: "**/cpm_modules"
+          key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+
+      - name: Install dependencies
+        run: sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev
+
+      - name: configure
+        run: cmake -S standalone -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_BUILD_TYPE=Debug
+
+      - name: build
+        run: cmake --build build -j4
+
+      - name: run
+        run: ./build/ImguiOpenglTemplate
+  buildInstall:
+    name: ⚙️ Build Install
+    if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch' }}
+    needs: [linting, testWindows, testLinux, testMacOS]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: "**/cpm_modules"
+          key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+
+      - name: Install dependencies
+        run: sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev
+
+      - name: build and install library
+        run: |
+          cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
+          sudo cmake --build build --target install
+          rm -rf build
+
+      - name: configure
+        run: cmake -Stest -Bbuild -DTEST_INSTALLED_VERSION=1
+
+      - name: build
+        run: cmake --build build --config Debug -j4
+
+      - name: test
+        run: |
+          cd build
+          ctest --build-config Debug
