@@ -30,7 +30,6 @@ CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.8.0")
 
 message(STATUS "Finished fetching third party libraries")
 
-
 # ---- Add source files ----
 
 # Note: globbing sources is considered bad practice as CMake's generators may not detect new files
@@ -42,10 +41,7 @@ file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/
 
 # Note: for header-only libraries change all PUBLIC flags to INTERFACE and create an interface
 # target: add_library(${PROJECT_NAME} INTERFACE)
-add_library(${PROJECT_NAME} 
-  ${headers} 
-  ${sources}
-)
+add_library(${PROJECT_NAME} ${headers} ${sources})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 
@@ -61,7 +57,7 @@ target_include_directories(
 
 add_subdirectory(external)
 
-#-----------------------------------------------------
+# -----------------------------------------------------
 
 # ---- Create an installable target ----
 # this allows users to install and find the library via `find_package()`.
