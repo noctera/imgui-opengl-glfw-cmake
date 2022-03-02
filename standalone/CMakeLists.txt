@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 project(ImguiOpenglTemplateStandalone LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # --- Import tools ----
 
 include(../cmake/tools.cmake)
@@ -18,6 +21,6 @@ file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
 
 add_executable(${PROJECT_NAME} ${sources})
 
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17 OUTPUT_NAME "ImguiOpenglTemplate")
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11 OUTPUT_NAME "ImguiOpenglTemplate")
 
 target_link_libraries(${PROJECT_NAME} ImguiOpenglTemplate::ImguiOpenglTemplate imgui)
