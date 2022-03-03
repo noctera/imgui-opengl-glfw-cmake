@@ -123,7 +123,7 @@ jobs:
           key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
 
       - name: Install dependencies
-        run: sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev
+        run: sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev xorg-dev
 
       - name: configure
         run: cmake -S standalone -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_BUILD_TYPE=Debug
@@ -147,7 +147,7 @@ jobs:
           key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
 
       - name: Install dependencies
-        run: sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev
+        run: sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev xorg-dev
 
       - name: build and install library
         run: |
