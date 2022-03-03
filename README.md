@@ -172,6 +172,4 @@ In order to get everything working perfectly, I inspired myself from the followi
 
 Doxygen config -> [kracejic/EmptyDoxygenCmake](https://github.com/kracejic/EmptyDoxygenCMake)
 
-Cmake SDL2 linking -> [Pesc0/imgui-cmake](https://github.com/Pesc0/imgui-cmake)
-
 And just to be fair, I want to attribute this awesome Cmake Project template from [TheLartians/ModernCppStarter](https://github.com/TheLartians/ModernCppStarter)
