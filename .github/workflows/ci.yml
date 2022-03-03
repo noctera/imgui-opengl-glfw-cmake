@@ -58,7 +58,7 @@ jobs:
           cd build
           ctest --build-config Debug
   testLinux:
-    name: 🧪 Test Windows
+    name: 🧪 Test Linux
     if: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) }}
     needs: linting
     runs-on: ubuntu-latest
@@ -71,7 +71,7 @@ jobs:
           key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
 
       - name: Install dependencies
-        run: sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev
+        run: sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev xorg-dev
 
       - name: configure
         run: cmake -Stest -Bbuild -DENABLE_TEST_COVERAGE=1 -DCMAKE_BUILD_TYPE=Debug
