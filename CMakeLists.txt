@@ -59,6 +59,7 @@ target_include_directories(
 )
 
 add_subdirectory(external)
+target_link_libraries(${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:imgui>)
 
 # -----------------------------------------------------
 
